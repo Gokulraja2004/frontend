@@ -1,182 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AWS TASK Report</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            max-width: 850px;
-            margin: 0 auto;
-            padding: 40px 20px;
-            background-color: #ffffff;
-        }
-        header {
-            border-bottom: 2px solid #333;
-            margin-bottom: 30px;
-            padding-bottom: 10px;
-        }
-        h1 { margin: 0; color: #000; }
-        h2 { border-left: 5px solid #333; padding-left: 10px; margin-top: 30px; color: #222; }
-        h3 { color: #444; margin-top: 20px; }
-        
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 20px 0;
-        }
-        table, th, td {
-            border: 1px solid #ccc;
-        }
-        th, td {
-            padding: 12px;
-            text-align: left;
-        }
-        th { background-color: #f9f9f9; }
-
-        .code-box {
-            background-color: #f4f4f4;
-            padding: 15px;
-            border-left: 4px solid #666;
-            font-family: 'Courier New', monospace;
-            margin: 15px 0;
-        }
-        .tech-list { margin: 10px 0; }
-        .tech-item {
-            display: inline-block;
-            border: 1px solid #333;
-            padding: 4px 10px;
-            margin-right: 5px;
-            font-size: 14px;
-        }
-        ul { padding-left: 20px; }
-        li { margin-bottom: 8px; }
-        a { color: #0066cc; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login Page</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<header>
-    <h1>AWS TASK: VPC Infrastructure</h1>
-    <p>Architecture: Public & Private Subnet | NAT Gateway | Bastion Host | Nginx | ALB</p>
-</header>
-
-<section>
-    <h2>1. Project Overview</h2>
-    <p>This project demonstrates a complete AWS networking and web hosting setup. The goal is to securely host a web application inside a private subnet while making it accessible through a public Application Load Balancer (ALB).</p>
+  <div class="login-container">
     
-    <div class="tech-list">
-        <strong>Technologies:</strong>
-        <span class="tech-item">AWS VPC</span>
-        <span class="tech-item">EC2</span>
-        <span class="tech-item">NAT Gateway</span>
-        <span class="tech-item">Nginx</span>
-        <span class="tech-item">ALB</span>
-        <span class="tech-item">Linux</span>
-    </div>
-</section>
+    <h1>Login</h1>
 
-<section>
-    <h2>2. Network Configuration</h2>
-    <h3>VPC & Subnet Details</h3>
-    <table>
-        <tr>
-            <th>Resource</th>
-            <th>Name</th>
-            <th>CIDR Block</th>
-        </tr>
-        <tr>
-            <td>VPC</td>
-            <td>demo-vpc</td>
-            <td>10.0.0.0/16</td>
-        </tr>
-        <tr>
-            <td>Public Subnet</td>
-            <td>pu-sub</td>
-            <td>10.0.1.0/24</td>
-        </tr>
-        <tr>
-            <td>Private Subnet</td>
-            <td>pri-sub</td>
-            <td>10.0.2.0/24</td>
-        </tr>
-    </table>
+    <input type="text" id="username" placeholder="Enter Username">
 
-    <h3>Routing & Gateways</h3>
-    <ul>
-        <li><strong>Internet Gateway:</strong> Attached to VPC to provide public internet access.</li>
-        <li><strong>NAT Gateway:</strong> Deployed in the public subnet to allow private instances to download updates.</li>
-        <li><strong>Public Route Table:</strong> Routes 0.0.0.0/0 to the Internet Gateway.</li>
-        <li><strong>Private Route Table:</strong> Routes 0.0.0.0/0 to the NAT Gateway.</li>
-    </ul>
-</section>
+    <input type="password" id="password" placeholder="Enter Password">
 
-<section>
-    <h2>3. Server Deployment</h2>
-    <h3>EC2 Instances</h3>
-    <ul>
-        <li><strong>Bastion Host (Public):</strong> Acts as a secure jump server for SSH management.</li>
-        <li><strong>Private EC2 (Nginx):</strong> Hosts the Calculator and Portfolio  securely without a public IP.</li>
-    </ul>
+    <button onclick="login()">
+      Login
+    </button>
 
-    <h3>Web Server Setup</h3>
-    <p>Commands used to configure the Nginx server in the private instance:</p>
-    <div class="code-box">
-        sudo yum install nginx -y<br>
-        sudo systemctl enable nginx<br>
-        sudo systemctl start nginx
-    </div>
-</section>
+    <p id="message"></p>
 
-<section>
-    <h2>4. Security Group Rules</h2>
-    <table>
-        <tr>
-            <th>Security Group</th>
-            <th>Port</th>
-            <th>Source / Allowed Traffic</th>
-        </tr>
-        <tr>
-            <td>Bastion SG</td>
-            <td>22 (SSH)</td>
-            <td>Administrator IP (My IP)</td>
-        </tr>
-        <tr>
-            <td>Private EC2 SG</td>
-            <td>80 (HTTP)</td>
-            <td>ALB Security Group</td>
-        </tr>
-        <tr>
-            <td>Private EC2 SG</td>
-            <td>22 (SSH)</td>
-            <td>Bastion Security Group</td>
-        </tr>
-    </table>
-</section>
+  </div>
 
-<section>
-    <h2>5. Load Balancer & Final Access</h2>
-    <p>An <strong>Application Load Balancer (ALB)</strong> was configured to manage incoming web traffic:</p>
-    <ul>
-        <li><strong>Target Group:</strong> Private EC2 instance registered on Port 80.</li>
-        <li><strong>Health Check:</strong> Verified status as 'Healthy' for path "/".</li>
-    </ul>
-    <p><strong>Application URL:</strong> <a href="#">http://my-load-balancer-517638320.ap-south-1.elb.amazonaws.com</a></p>
-</section>
-
-<section>
-    <h2>6. Learning Outcomes</h2>
-    <ul>
-        <li>Implemented multi-tier architecture with Public/Private isolation.</li>
-        <li>Mastered secure administrative access using a Bastion Host.</li>
-        <li>Configured NAT Gateways for secure outbound-only internet connectivity.</li>
-        <li>Gained hands-on experience with ALB and Target Group health management.</li>
-        <li>Understood the practical application of SGs and NACLs in a production environment.</li>
-    </ul>
-</section>
-
+  <script src="script.js"></script>
 </body>
 </html>
